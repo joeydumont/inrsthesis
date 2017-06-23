@@ -1,0 +1,538 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2017 by Joey Dumont <joey.dumont@gmail.com>
+% -------------------------------------------------------
+%
+% This file may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in:
+%
+%    http://www.latex-project.org/lppl.txt
+%
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{inrsthesis.dtx}
+%</driver>
+%<class>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+%<class>\ProvidesClass{inrsthesis}
+%<*class>
+    [2017/06/22 v1.0 INRS-EMT thesis template]
+%</class>
+%
+%<*driver>
+\documentclass[11pt]{ltxdoc}
+  \usepackage{ifxetex}
+  \ifxetex
+    \RequirePackage{fontspec}
+    \RequirePackage{unicode-math}
+    \defaultfontfeatures{Ligatures=TeX}
+  \else
+    \RequirePackage[T1]{fontenc}
+    \RequirePackage[utf8]{inputenc}
+  \fi
+  \usepackage{natbib}
+  \usepackage{color,booktabs,metalogo}
+  \usepackage{todonotes}
+
+  \EnableCrossrefs
+  \CodelineIndex
+  \RecordChanges
+
+  \definecolor{link}{rgb}{0,0.4,0.6}   % ~RoyalBlue de dvips
+  \definecolor{url}{rgb}{0.6,0,0}      % rouge-brun
+  \definecolor{citation}{rgb}{0,0.5,0} % vert foncé
+
+  \usepackage{hyperref}
+  \hypersetup{colorlinks, linktocpage,
+    urlcolor=url, linkcolor=link, citecolor=citation,
+    bookmarksopen, bookmarksnumbered, bookmarksdepth=subsection.
+    pdftitle={INRS Class Template Reference Manual},
+    pdfauthor={Joey Dumont}}
+
+\begin{document}
+  \DocInput{inrsthesis.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \CheckSum{0}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+% \changes{v1.0}{2017/06/22}{Initial version}
+%
+% \GetFileInfo{inrsthesis.dtx}
+%
+% \DoNotIndex{\newcommand,\newenvironment}
+%
+%
+% \title{\textsf{inrsthesis}: A Template for INRS-ÉMT Theses. \thanks{This document
+%   corresponds to \textsf{inrsthesis}~\fileversion, dated \filedate.}}
+% \author{Joey Dumont \\ \texttt{joey.dumont@gmail.com}}
+%
+% \maketitle
+%
+% \section{Introduction}
+%
+% This class aims to create a {\LaTeX} document which obeys the INRS thesis format
+% guidelines set forth \href{http://sdis.inrs.ca/sites/sdis.inrs.ca/files/INRSGuideST-Rev2016-fr.pdf}{here}.
+% Most of the functionality of this class is based on the |ulthese| class.
+%
+% \section{Usage}
+%
+% \StopEventually
+% ^^A INDEX DOES NOT WORK \StopEventually{\PrintChanges\PrintIndex}
+%
+% \newpage
+% \appendix
+%
+% \section{Implementation}
+% \label{sec:implementation}
+%
+% This appendix goes through the implementation of the class.
+%
+% Conditionals are very useful in general. In this case, we use
+% \textsc{ifxetex} to support the Xe{\LaTeX} engine.
+%    \begin{macrocode}
+%<*class>
+\RequirePackage{ifthen}
+\RequirePackage{ifxetex}
+%    \end{macrocode}
+%
+% \subsection{Class Options}
+
+% \begin{macro}{10pt,11pt,12pt}
+%
+% This defines the default font size of the document. When this option is processed,
+% |\normalsize| is defined to be either |10pt|, |11pt| or |12pt|. Font sizes
+% primitives such as |\LARGE| and |\small| are adjusted accordingly.
+%
+% This option is passed to \textsf{memoir} to ensure that page elements
+% are always the proper size. It is also stored in |\INRS@ptsize| for
+% later use (see |\maketitle|).
+%    \begin{macrocode}
+\newcommand*{\INRS@ptsize}{}
+\DeclareOption{10pt}{%
+  \PassOptionsToClass{10pt}{memoir}
+  \renewcommand*{\INRS@ptsize}{10}}
+\DeclareOption{11pt}{%
+  \PassOptionsToClass{11pt}{memoir}
+  \renewcommand*{\INRS@ptsize}{11}}
+\DeclareOption{12pt}{%
+  \PassOptionsToClass{12pt}{memoir}
+  \renewcommand*{\INRS@ptsize}{12}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Loading the \textsf{memoir} class}
+%
+% All remaining class options are passed to \textsc{memoir}.
+% We explicitly pass |twoside| and |openright|, as those are required
+% by the INRS thesis format guidelines.
+%    \begin{macrocode}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{memoir}}
+\ExecuteOptions{11pt,letterpaper}
+\ProcessOptions
+\LoadClass[twoside,openright]{memoir}
+%    \end{macrocode}
+%
+% \subsection{Required Pacakages}
+%
+% Here we describe the packages that are needed to use |inrsthesis|.
+%
+% If processing the document with {\XeLaTeX}, it is necessary to load
+% the \textsc{fontspec} package. \textsf{unicode-math} provides the
+% |\setmathfont| macro for easier math font management.
+%
+% When using {\LaTeX}, we use T1 font encodings.
+%    \begin{macrocode}
+\ifxetex
+  \RequirePackage{fontspec}
+  \RequirePackage{unicode-math}
+  \defaultfontfeatures{Ligatures=TeX}
+\else
+  \RequirePackage[T1]{fontenc}
+  \RequirePackage[utf8]{inputenc}
+\fi
+%    \end{macrocode}
+%
+% \textsc{graphicx} is a ubiquitously used {\LaTeX} package to include
+% graphics in a document. We load it here, along with \textsc{xcolor}
+% for user convenience.
+%    \begin{macrocode}
+\RequirePackage{graphicx}
+\RequirePackage{xcolor}
+\RequirePackage{tikz}
+%    \end{macrocode}
+%
+% The |\textcopyright| command used on the title page is provided by the
+% \textsf{textcomp} package.
+%    \begin{macrocode}
+\RequirePackage{textcomp}
+%    \end{macrocode}
+%
+% \subsection{Hyperlink colour}
+% \label{sec:couleurs}
+%
+% La classe définit une couleur standard pour les hyperliens, une
+% teinte de bleu assez foncée pour être à fois visible en couleur et
+% peu contrastante si le document est imprimé en noir et blanc.
+%    \begin{macrocode}
+\definecolor{INRSlinkcolor}{rgb}{0,0,0.3}
+%    \end{macrocode}
+%
+% \subsection{Margins}
+%
+% The INRS guidelines demand uniform margins of 25~mm, on both odd and
+% even pagess. While the same guidelines state the folio should be located
+% 10pt from the bottom of the page, this is way too close and does not even
+% replicate the Word template. Here, we use a distance of 10mm, as in
+% the |ulthese| class.
+%    \begin{macrocode}
+\setlrmarginsandblock{25mm}{25mm}{*}
+\setulmarginsandblock{25mm}{25mm}{*}
+\checkandfixthelayout[nearest]
+\setlength{\footskip}{\lowermargin}
+\addtolength{\footskip}{-10mm}
+%    \end{macrocode}
+%
+% Since the front matter of thesis can contain multiple pages,
+% it can happen that they overfill the boxes in the ToC. We thus
+% make the boxes bigger.
+%    \begin{macrocode}
+\renewcommand{\@pnumwidth}{3em}
+\renewcommand{\@tocrmarg}{4em}
+%    \end{macrocode}
+%
+% \subsection{Line Spacing}
+%
+% The line spacing is fixed to one half spacing. We do not use spaces
+% between paragraphs, but rather a first-line indent.
+%    \begin{macrocode}
+\OnehalfSpacing
+\setlength{\parskip}{0em}
+\setlength{\parindent}{2em}
+%    \end{macrocode}
+%
+% However, the ToC, list of tables and list of figures are singly spaced.
+%    \begin{macrocode}
+\renewcommand{\tocheadstart}{\SingleSpacing\chapterheadstart}
+\renewcommand{\lotheadstart}{\SingleSpacing\chapterheadstart}
+\renewcommand{\lofheadstart}{\SingleSpacing\chapterheadstart}
+%    \end{macrocode}
+%
+% \subsection{Header and footer}
+%
+% The header and footer are empty across the whole document,
+% except for the folio in the centre of the footer. We alias
+% the |plain| pagestyle to our own |inrs| pagestyle such that
+% the front and back matters use it by default.
+%    \begin{macrocode}
+\makepagestyle{inrs}
+  \makeevenfoot{inrs}{}\thepage{}{}
+  \makeoddfoot{inrs}{}{\thepage}{}
+\aliaspagestyle{plain}{inrs}
+\pagestyle{inrs}
+%    \end{macrocode}
+%
+% \subsection{Title Page}
+%
+% Most of the package is devoted to composing the title page, which is achieved
+% through a redefinition of |\maketitle|.
+%
+% \subsubsection{Font family}
+%
+% For simple vanity reasons, we use Helvetica on the title page. Here,
+% |\fontencoding{T1}| ensures that both the {\XeLaTeX} and {\LaTeX} engines
+% load the same font.
+%
+%    \begin{macrocode}
+\newcommand*{\INRS@phvfamily}{\fontencoding{T1}\fontfamily{phv}\selectfont}
+%    \end{macrocode}
+% Here, we use our previously defined |\INRS@ptsize| to make sure that the
+% elements of the title page are always the same size. For a reference,
+% check Table~3.9 of the \href{http://muug.ca/mirror/ctan/macros/latex/contrib/memoir/memman.pdf}{\textsf{memoir} manual}.
+%    \begin{macrocode}
+\ifnum\INRS@ptsize=10\relax
+  \newcommand*{\INRS@fonttitle}{\normalfont\LARGE\bfseries\INRS@phvfamily}
+  \newcommand*{\INRS@fontsubtitle}{\normalfont\Large\bfseries\INRS@phvfamily}
+  \newcommand*{\INRS@fontauthor}{\normalfont\Large\INRS@phvfamily}
+  \newcommand*{\INRS@fontprogram}{\INRS@fontauthor}
+  \newcommand*{\INRS@fontbase}{\normalfont\Large\INRS@phvfamily}
+\fi
+\ifnum\INRS@ptsize=11\relax
+  \newcommand*{\INRS@fonttitle}{\normalfont\Large\bfseries\INRS@phvfamily}
+  \newcommand*{\INRS@fontsubtitle}{\normalfont\large\bfseries\INRS@phvfamily}
+  \newcommand*{\INRS@fontauthor}{\normalfont\large\INRS@phvfamily}
+  \newcommand*{\INRS@fontprogram}{\INRS@fontauthor}
+  \newcommand*{\INRS@fontbase}{\normalfont\large\INRS@phvfamily}
+\fi
+\ifnum\INRS@ptsize=12\relax
+  \newcommand*{\INRS@fonttitle}{\normalfont\large\bfseries\INRS@phvfamily}
+  \newcommand*{\INRS@fontsubtitle}{\normalfont\normalsize\bfseries\INRS@phvfamily}
+  \newcommand*{\INRS@fontauthor}{\normalfont\normalsize\bfseries\INRS@phvfamily}
+  \newcommand*{\INRS@fontprogram}{\INRS@fontauthor}
+  \newcommand*{\INRS@fontbase}{\normalfont\normalsize\INRS@phvfamily}
+\fi
+%    \end{macrocode}
+% \subsubsection{Title page API}
+%
+% We use a set of internal and user facing commands to build the title page.
+% The internal commands are defined below.
+%    \begin{macrocode}
+\newcommand{\INRS@maintitle}{}
+\newcommand{\INRS@subtitle}{}
+\newcommand*{\INRS@author}{}
+\newcommand*{\INRS@program}{}
+\newcommand*{\INRS@year}{}
+\newcommand*{\INRS@centre}{}
+\newcommand*{\INRS@jury}{}
+
+%\begin{macro}{INRS@printjury}
+% The jury is a little complex to typeset if one wants to have
+% both columns left-aligned and still be symmetrical enough to be
+% pleasing to the eye (an easy solution would be right-align the first
+% column).
+\newcommand{\juryitem}[2]{}
+\newlength{\jurywidth}
+
+\newcommand{\INRS@printjury}{%
+  \begin{center}
+  % this just prints the divider line (remove in the final version)
+  \makebox[\textwidth]{%
+    \smash{\vrule width 0.1pt depth \textheight height 0pt}%
+  }
+  %%% end part to remove
+  \sbox0{%
+    \def\juryitem##1##2{\begin{tabular}{@{}l@{}}##1\end{tabular}}%
+    \begin{tabular}{@{}l@{}}\jury\end{tabular}%
+  }%
+  \setlength{\jurywidth}{\wd0}%
+  \sbox0{%
+    \def\juryitem##1##2{\begin{tabular}{@{}l@{}}##2\end{tabular}}%
+    \begin{tabular}{@{}l@{}}\jury\end{tabular}%
+  }%
+  \ifdim\wd0>\jurywidth \setlength{\jurywidth}{\wd0}\fi
+  \renewcommand{\arraystretch}{3}%
+  \def\juryitem##1##2{%
+    \renewcommand\arraystretch{1}%
+    \begin{tabular}[t]{@{}l@{}}##1\end{tabular}
+    &
+    \renewcommand\arraystretch{1}%
+    \begin{tabular}[t]{@{}l@{}}##2\end{tabular}
+  }%
+  \begin{tabular}{@{}p{\jurywidth}@{\hspace{2cm}}p{\jurywidth}@{}}
+  \jury
+  \end{tabular}%
+  \end{center}
+  \thispagestyle{empty}
+  \clearpage
+}
+
+%    \end{macrocode}
+% User-facing API to modify the internal title page commands.
+% Note that since the subtitle is optional, we store its presence
+% or its absence in a boolean value to better typeset the title page.
+% The |\title| is always typeset is capital letters. This is enforced with
+% with the |\uppercase| {\TeX} macro, as the {\LaTeX} equivalent |\MakeUpperCase|
+% had trouble with line breaks.
+% The |\program| macro is automatically converted to lower case.
+% The |\jury| should be formatted as a series of |\juryitem|s.
+%
+%
+%    \begin{macrocode}
+\newboolean{INRS@hassubtitle}
+\renewcommand{\title}[1]{\renewcommand{\INRS@maintitle}{#1}}
+\newcommand{\subtitle}[1]{%
+  \setboolean{INRS@hassubtitle}{true}
+  \renewcommand{\INRS@subtitle}{#1}}
+\renewcommand*{\author}[1]{\renewcommand*{\INRS@author}{#1}}
+\renewcommand*{\year}[1]{\renewcommand*{\INRS@year}{#1}}
+\newcommand*{\program}[1]{\renewcommand*{\INRS@program}{#1}}
+\newcommand{\centreINRS}[1]{\renewcommand*{\INRS@centre}{#1}}
+\newcommand{\jury}[1]{\renewcommand*{\INRS@jury}{#1}}
+%    \end{macrocode}
+%
+% \subsubsection{Titre et sous-titre}
+%
+% To obtain a consistent positioning of the elements of the title page,
+% we place the title and subtitle in boxes. This enables us to compute
+% the height of the title+subtitle block and adjust the distance
+% between the title and author blocks.
+%
+% \begin{macro}{\INRS@measuretitle}
+%   The title and subtitles are placed in the boxes
+%   |\INRS@titlebox| et |\INRS@subtitlebox|. The
+%   |\INRS@measuretitle| macro allows the measurement of the typeset block later on.
+%   We set a line spacing of 1.5 in this block.
+%    \begin{macrocode}
+\newsavebox{\INRS@titlebox}
+\newsavebox{\INRS@subtitlebox}
+\newlength{\INRS@titleboxtotht}
+\newlength{\INRS@subtitleboxtotht}
+\newcommand{\INRS@measuretitle}{%
+  \setbox\INRS@titlebox=\vbox{%
+    \centering\INRS@fonttitle\expandafter\uppercase\expandafter{\INRS@maintitle}}
+  \setlength{\INRS@titleboxtotht}{%
+    \dimexpr\ht\INRS@titlebox+\dp\INRS@titlebox}
+  \ifthenelse{\boolean{INRS@hassubtitle}}{%
+    \setbox\INRS@subtitlebox=\vbox{%
+      \centering\vspace*{\baselineskip}\INRS@fontsubtitle\INRS@subtitle}
+    \setlength{\INRS@subtitleboxtotht}{%
+      \dimexpr\ht\INRS@subtitlebox+\dp\INRS@subtitlebox}}{}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{Building the Title Page}
+%
+% \begin{macro}{\pagetitre}
+%   We use a single line spacing and no space between paragraphs.
+%
+%   The firs block consists in the name of the university,
+%   which is hard-coded in the |\maketitle| command. We then
+%   add 
+%
+%   La page titre des thèses et mémoires en cotutelle, en
+%   bidiplomation ou en extension ne comporte pas de logo de
+%   l'Université Laval.
+%
+%   Le nom de l'auteur et la notice de copyright sont insérées
+%   directement dans le code de la commande |\pagetitre|.
+%    \begin{macrocode}
+\newlength{\INRS@docidspacing}
+\setlength{\INRS@docidspacing}{45pt}
+\newlength{\INRS@authorspacing}
+\setlength{\INRS@authorspacing}{45pt}
+\renewcommand{\maketitle}{{%
+    \clearpage
+    \thispagestyle{empty}
+    \SingleSpacing\setlength{\parskip}{0pt}
+    \begin{tikzpicture}[remember picture,overlay]
+    \draw[red] (current page.north) -- (current page.south);
+    \end{tikzpicture}
+    {\centering\INRS@fontbase
+      Universit\'e du Qu\'ebec\\
+      Institut National de la Recherche Scientifique\\
+      \INRS@centre\\}
+    \vspace{\INRS@docidspacing}
+    \centering
+    \INRS@measuretitle
+    \addtolength{\INRS@docidspacing}{-\INRS@titleboxtotht}
+    \addtolength{\INRS@docidspacing}{-\INRS@subtitleboxtotht}
+    \ifdim\INRS@docidspacing<\baselineskip\relax
+        \setlength{\INRS@docidspacing}{\baselineskip}
+        \addtolength{\INRS@authorspacing}{-\baselineskip}
+    \fi
+    \box\INRS@titlebox
+    \box\INRS@subtitlebox
+    \vspace{\INRS@authorspacing}
+    {\centering\INRS@fontbase
+     Par \\
+     \INRS@author}\\
+    \vspace{\INRS@authorspacing}
+    {\centering\INRS@fontprogram
+     Thèse présentée pour l'obtention du grade de\\
+     Philosophi\ae~ Doctor (Ph.~D.)\\
+     en \expandafter\MakeLowercase\expandafter{\INRS@program}}
+
+     \vfill
+
+     {\INRS@fontsubtitle
+      Jury d'évaluation}
+
+    {\INRS@fontbase
+     \renewcommand{\arraystretch}{2}
+     \setlength{\tabcolsep}{20pt}
+     \begin{center}
+     \begin{tabular}{>{\raggedleft}p{5cm}>{\raggedright\arraybackslash}p{5cm}}
+      \INRS@jury
+     \end{tabular}
+     \end{center}}
+
+     \vspace*{10pt}
+
+     \begin{flushleft}
+    {\textcopyright} {\INRS@fontbase Droits réservés de \INRS@author, \INRS@year\par}
+    \cleardoublepage
+    \end{flushleft}
+    }}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{Chapter style of the front matter}
+%
+%
+% \subsection{Appendices}
+%
+% \begin{macro}{\appendix}
+%   Si la thèse ou le mémoire comporte une ou plusieurs annexes,
+%   composer celles-ci comme des chapitres normaux insérés dans le
+%   document maître après la commande |\appendix|. Cette commande a
+%   pour effet de passer d'un mode de numération numérique (1, 2, 3,
+%   \dots) à un mode alphabétique (A, B, C, \dots).
+%    \begin{macrocode}
+\RequirePackage{letltxmacro}
+\LetLtxMacro{\oldappendix}{\appendix}
+\renewcommand{\appendix}{{%
+  \oldappendix
+  \gdef\thechapter{\@Roman\c@chapter}
+  }}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Dedication and epigraph}
+%
+% Those macros are straight up lifted from |ulthese|. We use
+% the |epigraph| command from \textsc{memoir} to typeset both
+% |\dedication| and |epigraph|.
+% \begin{macro}{\dedication}
+%   The dedication is typeset on its own page, and is simply an epigraph
+%   without an author.
+%    \begin{macrocode}
+\newcommand{\dedication}[1]{{%
+    \clearpage
+    \pagestyle{empty}
+    \setlength{\beforeepigraphskip}{10\baselineskip}
+    \setlength{\epigraphrule}{0pt}
+    \epigraphtextposition{flushright}
+    \mbox{}\epigraph{\itshape #1}{}}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\epigraph}
+%   To safely define a speciliazed |\epigraph| command, we use the |letltxmacro|
+%   package.
+%    \begin{macrocode}
+\LetLtxMacro{\oldepigraph}{\epigraph}
+\renewcommand{\epigraph}[2]{{%
+    \clearpage
+    \pagestyle{empty}
+    \setlength{\beforeepigraphskip}{10\baselineskip}
+    \mbox{}\oldepigraph{#1}{#2}}}
+%    \end{macrocode}
+% \end{macro}
+%
+%</class>
+%
+% ^^A End of the class implementation.
+%
+% \Finale
