@@ -307,32 +307,35 @@
 \newcommand*{\INRS@year}{}
 \newcommand*{\INRS@centre}{}
 \newcommand*{\INRS@jury}{}
+%    \end{macrocode}
 
 %\begin{macro}{INRS@printjury}
 % The jury is a little complex to typeset if one wants to have
 % both columns left-aligned and still be symmetrical enough to be
 % pleasing to the eye (an easy solution would be right-align the first
-% column).
+% column). The user facing |\juryitem| is used as a building block
+% of |\jury|, defined below.
+%    \begin{macrocode}
 \newcommand{\juryitem}[2]{}
-\newlength{\jurywidth}
+\newlength{\INRS@jurywidth}
 
 \newcommand{\INRS@printjury}{%
   \begin{center}
   % this just prints the divider line (remove in the final version)
-  \makebox[\textwidth]{%
-    \smash{\vrule width 0.1pt depth \textheight height 0pt}%
-  }
+  %\makebox[\textwidth]{%
+  %  \smash{\vrule width 0.1pt depth \textheight height 0pt}%
+  %}
   %%% end part to remove
   \sbox0{%
     \def\juryitem##1##2{\begin{tabular}{@{}l@{}}##1\end{tabular}}%
-    \begin{tabular}{@{}l@{}}\jury\end{tabular}%
+    \begin{tabular}{@{}l@{}}\INRS@jury\end{tabular}%
   }%
-  \setlength{\jurywidth}{\wd0}%
+  \setlength{\INRS@jurywidth}{\wd0}%
   \sbox0{%
     \def\juryitem##1##2{\begin{tabular}{@{}l@{}}##2\end{tabular}}%
-    \begin{tabular}{@{}l@{}}\jury\end{tabular}%
+    \begin{tabular}{@{}l@{}}\INRS@jury\end{tabular}%
   }%
-  \ifdim\wd0>\jurywidth \setlength{\jurywidth}{\wd0}\fi
+  \ifdim\wd0>\INRS@jurywidth \setlength{\INRS@jurywidth}{\wd0}\fi
   \renewcommand{\arraystretch}{3}%
   \def\juryitem##1##2{%
     \renewcommand\arraystretch{1}%
@@ -341,15 +344,14 @@
     \renewcommand\arraystretch{1}%
     \begin{tabular}[t]{@{}l@{}}##2\end{tabular}
   }%
-  \begin{tabular}{@{}p{\jurywidth}@{\hspace{2cm}}p{\jurywidth}@{}}
-  \jury
+  \begin{tabular}{@{}p{\INRS@jurywidth}@{\hspace{1cm}}p{\INRS@jurywidth}@{}}
+  \INRS@jury
   \end{tabular}%
   \end{center}
-  \thispagestyle{empty}
-  \clearpage
-}
 
+}
 %    \end{macrocode}
+% \end{macro}
 % User-facing API to modify the internal title page commands.
 % Note that since the subtitle is optional, we store its presence
 % or its absence in a boolean value to better typeset the title page.
@@ -358,7 +360,6 @@
 % had trouble with line breaks.
 % The |\program| macro is automatically converted to lower case.
 % The |\jury| should be formatted as a series of |\juryitem|s.
-%
 %
 %    \begin{macrocode}
 \newboolean{INRS@hassubtitle}
@@ -372,6 +373,9 @@
 \newcommand{\centreINRS}[1]{\renewcommand*{\INRS@centre}{#1}}
 \newcommand{\jury}[1]{\renewcommand*{\INRS@jury}{#1}}
 %    \end{macrocode}
+%
+%
+% Testing |\INRS@printjury|.
 %
 % \subsubsection{Titre et sous-titre}
 %
@@ -427,9 +431,6 @@
     \clearpage
     \thispagestyle{empty}
     \SingleSpacing\setlength{\parskip}{0pt}
-    \begin{tikzpicture}[remember picture,overlay]
-    \draw[red] (current page.north) -- (current page.south);
-    \end{tikzpicture}
     {\centering\INRS@fontbase
       Universit\'e du Qu\'ebec\\
       Institut National de la Recherche Scientifique\\
@@ -457,17 +458,9 @@
 
      \vfill
 
-     {\INRS@fontsubtitle
-      Jury d'évaluation}
-
-    {\INRS@fontbase
-     \renewcommand{\arraystretch}{2}
-     \setlength{\tabcolsep}{20pt}
-     \begin{center}
-     \begin{tabular}{>{\raggedleft}p{5cm}>{\raggedright\arraybackslash}p{5cm}}
-      \INRS@jury
-     \end{tabular}
-     \end{center}}
+     {\INRS@fontsubtitle Jury d'évaluation}
+     \vspace{-10pt}
+    {\INRS@fontbase\INRS@printjury}
 
      \vspace*{10pt}
 

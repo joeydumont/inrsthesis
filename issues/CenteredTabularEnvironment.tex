@@ -1,0 +1,41 @@
+    \documentclass{memoir}
+
+    \usepackage{tikz}
+
+    \begin{document}
+
+    \newcommand{\jury}{%
+    Président du jury et \newline examinateur interne &  Nom du professeur   \newline Institution                                  \\%
+    Examinateur externe                               &  Nom du professeur   \newline Faculté ou département \newline Institution  \\%
+    Examinateur interne                               &  Nom du professeur   \newline Institution                                  \\%
+    Directeur de recherche                            &  Jean-Claude Kieffer \newline INRS-ÉMT                                     \\%
+    Codirecteur de recherche                          &  Steve MacLean       \newline INRS-ÉMT \newline University of Waterloo
+    }
+
+    \thispagestyle{empty}
+    \newlength{\centeradjust}
+    \calccentering{\centeradjust}  % Calculate center length and stores in centeradjust
+    \begin{adjustwidth*}{\centeradjust}{-\centeradjust}   % Adjust center
+    \begin{adjustwidth}{-1cm}{-1cm}
+      \begin{tikzpicture}[remember picture,overlay]
+        \draw[red] (current page.north) -- (current page.south);
+      \end{tikzpicture}
+      \begin{center}
+      \begin{OnehalfSpace}
+        \vspace*{3\baselineskip}
+         {\Large Centered page using adjustwidth (as per the \texttt{memoir} manual)}
+
+         \vfill
+
+         The following table is not centered the way I want it to be.\\[1cm]
+        \renewcommand{\arraystretch}{2}
+         \begin{tabular}{p{5cm}@{}p{5cm}@{}}
+          \jury
+        \end{tabular}
+       \vspace*{3\baselineskip}
+     \end{OnehalfSpace}
+     \end{center}
+    \end{adjustwidth}
+    \end{adjustwidth*}
+
+    \end{document}

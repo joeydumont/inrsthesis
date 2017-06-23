@@ -1,0 +1,77 @@
+\documentclass{memoir}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+
+\usepackage{xcolor}
+
+% Courtesy of:
+% https://tex.stackexchange.com/questions/376501/centering-a-tabular-environment-such-that-whitespace-is-equally-distributed
+
+\newcommand{\juryitem}[2]{}
+\newlength{\jurywidth}
+
+\newcommand{\printjury}{%
+  \begin{center}
+  % this just prints the divider line (remove in the final version)
+  \makebox[\textwidth]{%
+    \smash{\vrule width 0.1pt depth \textheight height 0pt}%
+  }
+  %%% end part to remove
+  \sbox0{%
+    \def\juryitem##1##2{\begin{tabular}{@{}l@{}}##1\end{tabular}}%
+    \begin{tabular}{@{}l@{}}\jury\end{tabular}%
+  }%
+  \setlength{\jurywidth}{\wd0}%
+  \sbox0{%
+    \def\juryitem##1##2{\begin{tabular}{@{}l@{}}##2\end{tabular}}%
+    \begin{tabular}{@{}l@{}}\jury\end{tabular}%
+  }%
+  \ifdim\wd0>\jurywidth \setlength{\jurywidth}{\wd0}\fi
+  \renewcommand{\arraystretch}{3}%
+  \def\juryitem##1##2{%
+    \renewcommand\arraystretch{1}%
+    \begin{tabular}[t]{@{}l@{}}##1\end{tabular}
+    &
+    \renewcommand\arraystretch{1}%
+    \begin{tabular}[t]{@{}l@{}}##2\end{tabular}
+  }%
+  \begin{tabular}{@{}p{\jurywidth}@{\hspace{2cm}}p{\jurywidth}@{}}
+  \jury
+  \end{tabular}%
+  \end{center}
+  \thispagestyle{empty}
+  \clearpage
+}
+
+\begin{document}
+
+\newcommand{\jury}{%
+  \juryitem
+    {Président du jury et \\ examinateur interne}
+    {Nom du professeur \\ Institution}
+  \\
+  \juryitem
+    {Examinateur externe}
+    {Nom du professeur \\ Faculté ou département \\ Institution}
+  \\
+  \juryitem
+    {Examinateur interne}
+    {Nom du professeur \\ Institution}
+  \\
+  \juryitem
+    {Directeur de recherche}
+    {Jean-Claude Van Damme \\ ULB}
+  \\
+  \juryitem
+    {Codirecteur de recherche}
+    {Steve McQueen \\ USCFA}
+  \\
+  \juryitem
+    {Codirecteur de recherche}
+    {Steven Seagal \\ Texas Rangers}
+}
+
+\printjury
+
+\end{document}
