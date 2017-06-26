@@ -117,6 +117,7 @@
 %<*class>
 \RequirePackage{ifthen}
 \RequirePackage{ifxetex}
+\RequirePackage{xpatch}
 %    \end{macrocode}
 %
 % \subsection{Class Options}
@@ -141,6 +142,22 @@
 \DeclareOption{12pt}{%
   \PassOptionsToClass{12pt}{memoir}
   \renewcommand*{\INRS@ptsize}{12}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{SymmetricalJury}
+%
+% This changes the format of the |\jury| information. While
+% the option |SymmetricalJury| does not exactly follow the INRS guidelines,
+% it is more pleasing to the eye.
+%    \begin{macrocode}
+\newboolean{INRS@SymmetricalJury}
+\setboolean{INRS@SymmetricalJury}{false}
+\DeclareOption{SymmetricalJury}{%
+  \setboolean{INRS@SymmetricalJury}{true}%
+  \newlength{\INRS@jurycolsep}%
+  \setlength{\INRS@jurycolsep}{20pt}%
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -312,9 +329,15 @@
 %\begin{macro}{INRS@printjury}
 % The jury is a little complex to typeset if one wants to have
 % both columns left-aligned and still be symmetrical enough to be
-% pleasing to the eye (an easy solution would be right-align the first
-% column). The user facing |\juryitem| is used as a building block
+% pleasing to the eye . The |SymmetricalJury| class option right aligns the
+% first column. The user facing |\juryitem| is used as a building block
 % of |\jury|, defined below.
+%
+% |\juryitem| takes two arguments. The first is the content of the first column,
+% while the second is the content of the second column.
+%
+% The code for |SymmetricalJury| is courtesy of user egreg on StackOverflow.
+% See the original \href{https://tex.stackexchange.com/questions/376501/centering-a-tabular-environment-such-that-whitespace-is-equally-distributed}{question} for details.
 %    \begin{macrocode}
 \newcommand{\juryitem}[2]{}
 \newlength{\INRS@jurywidth}
@@ -344,11 +367,22 @@
     \renewcommand\arraystretch{1}%
     \begin{tabular}[t]{@{}l@{}}##2\end{tabular}
   }%
-  \begin{tabular}{@{}p{\INRS@jurywidth}@{\hspace{1cm}}p{\INRS@jurywidth}@{}}
-  \INRS@jury
-  \end{tabular}%
+  % Actual printing of the jury.
+  \ifthenelse{\boolean{INRS@SymmetricalJury}}
+  {
+    {
+      \setlength{\tabcolsep}{\INRS@jurycolsep}
+      \begin{tabular}{@{}>{\raggedleft}p{7cm}>{\raggedright\arraybackslash}p{7cm}@{}}
+      \INRS@jury
+      \end{tabular}
+    }
+  }
+  {
+    \begin{tabular}{@{}p{\INRS@jurywidth}@{\hspace{1cm}}p{\INRS@jurywidth}@{}}
+    \INRS@jury
+    \end{tabular}
+  }
   \end{center}
-
 }
 %    \end{macrocode}
 % \end{macro}
@@ -374,10 +408,7 @@
 \newcommand{\jury}[1]{\renewcommand*{\INRS@jury}{#1}}
 %    \end{macrocode}
 %
-%
-% Testing |\INRS@printjury|.
-%
-% \subsubsection{Titre et sous-titre}
+% \subsubsection{Title and subtitle}
 %
 % To obtain a consistent positioning of the elements of the title page,
 % we place the title and subtitle in boxes. This enables us to compute
@@ -412,16 +443,29 @@
 % \begin{macro}{\pagetitre}
 %   We use a single line spacing and no space between paragraphs.
 %
-%   The firs block consists in the name of the university,
+%   The first block consists in the name of the university,
 %   which is hard-coded in the |\maketitle| command. We then
-%   add 
+%   add the specific Centre from which the thesis originates through
+%   the |\centreINRS| macro.
 %
-%   La page titre des thèses et mémoires en cotutelle, en
-%   bidiplomation ou en extension ne comporte pas de logo de
-%   l'Université Laval.
+%   The second block is title+subtitle block. The title is centered
+%   and capitalized. The subtitle is in bold and centered.
 %
-%   Le nom de l'auteur et la notice de copyright sont insérées
-%   directement dans le code de la commande |\pagetitre|.
+%   The third block is the author block.
+%
+%   The fourth block is the program block. We state whether the thesis
+%   is submitted for a Masters or doctoral degree. We then state the program.
+%
+%   The next block is the jury, which lists all of the referees of the thesis.
+%   We provide two options to typeset the jury list. The default one is the
+%   one that most resembles the Word template, i.e. both columns are left-aligned.
+%   The class makes sure that this configuration is as symmetrical as possible, but
+%   having both columns left-aligned makes this hard. The second option makes
+%   the first column right-aligned, which makes for ann equal amount of whitespace
+%   between the columns and makes for a  more aesthestically pleasing typeset.
+%
+%   The last block is simply the copyright, the author and the year.
+%
 %    \begin{macrocode}
 \newlength{\INRS@docidspacing}
 \setlength{\INRS@docidspacing}{45pt}
@@ -472,24 +516,60 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsubsection{Chapter style of the front matter}
+% \subsection{Chapter styles}
 %
+% In this section we define the chapter styles of the front and main matters.
+% The front matter has unnumbered and centered titles with point size 16. The
+% main chapters are typeset in all caps, and are left-aligned, but have a point
+% size of only 14.
 %
+% \subsubsection{Front Matter}
+%
+%    \begin{macrocode}
+\makechapterstyle{INRSFrontMatter}
+{
+  \renewcommand{\chapterheadstart}{}
+  \renewcommand{\printchaptername}{}
+  \renewcommand{\chapternamenum}{}
+  \renewcommand{\printchapternum}{}
+  \renewcommand{\afterchapternum}{}
+  \renewcommand{\printchaptertitle}[1]{\centering\chaptitlefont \MakeUppercase{##1}\par}
+  \renewcommand{\chaptitlefont}{\normalfont\LARGE\bfseries\INRS@phvfamily}
+  \setlength{\beforechapskip}{0pt}
+}
+\xapptocmd{\frontmatter}{%
+  \chapterstyle{INRSFrontMatter}
+}
+{}{}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\makechapterstyle{INRSMainMatter}
+{
+  \renewcommand{\chapterheadstart}{}
+  \renewcommand{\printchaptername}{}
+  \renewcommand{\chapternamenum}{}
+  \renewcommand{\printchapternum}{\chapnumfont \thechapter}
+  \renewcommand{\afterchapternum}{\hspace*{\midchapskip}}
+  \renewcommand{\printchaptertitle}[1]{\chaptitlefont \MakeUppercase{##1}}
+  \renewcommand{\chapnumfont}{\normalfont\Large\bfseries}
+  \renewcommand{\chaptitlefont}{\normalfont\Large\bfseries}
+  \setlength{\beforechapskip}{0pt}
+  \setlength{\midchapskip}{2em}
+  \setlength{\afterchapskip}{40pt}
+}
+\xapptocmd{\mainmatter}{%
+  \chapterstyle{INRSMainMatter}
+}
+{}{}
+%    \end{macrocode}
 % \subsection{Appendices}
 %
 % \begin{macro}{\appendix}
-%   Si la thèse ou le mémoire comporte une ou plusieurs annexes,
-%   composer celles-ci comme des chapitres normaux insérés dans le
-%   document maître après la commande |\appendix|. Cette commande a
-%   pour effet de passer d'un mode de numération numérique (1, 2, 3,
-%   \dots) à un mode alphabétique (A, B, C, \dots).
+%   If the thesis contains any appendices, they should be numbered with capital
+%   Roman numerals.
 %    \begin{macrocode}
-\RequirePackage{letltxmacro}
-\LetLtxMacro{\oldappendix}{\appendix}
-\renewcommand{\appendix}{{%
-  \oldappendix
-  \gdef\thechapter{\@Roman\c@chapter}
-  }}
+\xapptocmd{\appendix}{\gdef\thechapter{\@Roman\c@chapter}}{}{}
 %    \end{macrocode}
 % \end{macro}
 %
@@ -498,29 +578,29 @@
 % Those macros are straight up lifted from |ulthese|. We use
 % the |epigraph| command from \textsc{memoir} to typeset both
 % |\dedication| and |epigraph|.
+% \begin{macro}{\epigraph}
+%   To safely define a speciliazed |\epigraph| command, we use the |letltxmacro|
+%   package.
+%    \begin{macrocode}
+\xpretocmd{\epigraph}{%
+    \clearpage
+    \pagestyle{empty}
+    \setlength{\beforeepigraphskip}{10\baselineskip}
+    \mbox{}
+}
+{}{}
+%    \end{macrocode}
+% \end{macro}
 % \begin{macro}{\dedication}
 %   The dedication is typeset on its own page, and is simply an epigraph
 %   without an author.
 %    \begin{macrocode}
 \newcommand{\dedication}[1]{{%
-    \clearpage
-    \pagestyle{empty}
-    \setlength{\beforeepigraphskip}{10\baselineskip}
+    %\clearpage
+    %\pagestyle{empty}
     \setlength{\epigraphrule}{0pt}
     \epigraphtextposition{flushright}
-    \mbox{}\epigraph{\itshape #1}{}}}
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\epigraph}
-%   To safely define a speciliazed |\epigraph| command, we use the |letltxmacro|
-%   package.
-%    \begin{macrocode}
-\LetLtxMacro{\oldepigraph}{\epigraph}
-\renewcommand{\epigraph}[2]{{%
-    \clearpage
-    \pagestyle{empty}
-    \setlength{\beforeepigraphskip}{10\baselineskip}
-    \mbox{}\oldepigraph{#1}{#2}}}
+    \epigraph{\itshape #1}{}}}
 %    \end{macrocode}
 % \end{macro}
 %
