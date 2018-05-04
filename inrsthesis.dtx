@@ -29,6 +29,7 @@
 \documentclass[11pt]{ltxdoc}
   \usepackage{ifxetex}
   \ifxetex
+    \RequirePackage{amsmath}
     \RequirePackage{fontspec}
     \RequirePackage{unicode-math}
     \defaultfontfeatures{Ligatures=TeX}
@@ -177,21 +178,6 @@
 %
 % Here we describe the packages that are needed to use |inrsthesis|.
 %
-% If processing the document with {\XeLaTeX}, it is necessary to load
-% the \textsc{fontspec} package. \textsf{unicode-math} provides the
-% |\setmathfont| macro for easier math font management.
-%
-% When using {\LaTeX}, we use T1 font encodings.
-%    \begin{macrocode}
-\ifxetex
-  \RequirePackage{fontspec}
-  \RequirePackage{unicode-math}
-  \defaultfontfeatures{Ligatures=TeX}
-\else
-  \RequirePackage[T1]{fontenc}
-  \RequirePackage[utf8]{inputenc}
-\fi
-%    \end{macrocode}
 %
 % \textsc{graphicx} is a ubiquitously used {\LaTeX} package to include
 % graphics in a document. We load it here, along with \textsc{xcolor}
