@@ -252,7 +252,7 @@
 % the front and back matters use it by default.
 %    \begin{macrocode}
 \makepagestyle{inrs}
-  \makeevenfoot{inrs}{}\thepage{}{}
+  \makeevenfoot{inrs}{}{\thepage}{}
   \makeoddfoot{inrs}{}{\thepage}{}
 \aliaspagestyle{plain}{inrs}
 \pagestyle{inrs}
@@ -546,6 +546,7 @@
 }
 \xapptocmd{\mainmatter}{%
   \chapterstyle{INRSMainMatter}
+  \pagestyle{inrs}
 }
 {}{}
 %    \end{macrocode}
