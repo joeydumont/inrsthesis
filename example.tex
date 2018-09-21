@@ -14,12 +14,17 @@
 % --                       Document Class                        -- %
 % ----------------------------------------------------------------- %
 
-\documentclass[11pt,SymmetricalJury,PhD]{inrsthesis}
+% -- Define the documentclass (see class documentation for options).
+\documentclass[11pt,SymmetricalJury,PhD]{inrsthesis}  % For Ph. D. theses
+%\documentclass[11pt,SymmetricalJury,MSc]{inrsthesis} % For M. Sc. theses
 \usepackage{lipsum}
 
 % ----------------------------------------------------------------- %
 % --                          Packages                           -- %
 % ----------------------------------------------------------------- %
+
+% These packages are entirely optional. I use there here to customize
+% the output to my liking: you can use whatever package you want here.
 
 % -- Math symbols and fonts.
 \let\mathfrak\undefined
@@ -57,6 +62,8 @@
 % ----------------------------------------------------------------- %
 % --                        Customization                        -- %
 % ----------------------------------------------------------------- %
+
+% Again, these are option.
 \newenvironment{chaptersummary}{%
   \begin{quotation}
   \SingleSpacing
@@ -89,6 +96,9 @@
 % ----------------------------------------------------------------- %
 % --                       Title Page Info                       -- %
 % ----------------------------------------------------------------- %
+
+% This section MUST be in the preamble.
+
 \title{inrsthesis -- an example file}
 %\subtitle{Towards a Realistic Modelling of High-Power \\Laser Systems in the
 % Quantum Theory}
@@ -117,6 +127,7 @@
     {Codirecteur de recherche}
     {Nom du professeur \\ Institution \\ Institution}
 }
+
 % --------------------------------------------------------------------------- %
 % --                               Document                                -- %
 % --------------------------------------------------------------------------- %
@@ -190,7 +201,6 @@ painstaking detail!
 \chapter{Another chapter}
 \label{chapter:methods}
 
-
 \section{First section}
 
 \subsection{First subsection}
@@ -224,7 +234,6 @@ painstaking detail!
 
 \chapter{Technical Result in Painstaking Detail}
 \label{app.technical}
-
 
 \backmatter
 
