@@ -1,0 +1,236 @@
+% --------------------------------------------------------------------------- %
+% Author:          Joey Dumont                <joey.dumont@gmail.com>         %
+% Date created:    Sep. 21st, 2018                                            %
+% Description:     Example file for the inrsthesis class.                     %
+% License:         CC0                                                        %
+%                  <https://creativecommons.org/publicdomain/zero/1.0>        %
+% --------------------------------------------------------------------------- %
+
+% --------------------------------------------------------------------------- %
+% --                               Preamble                                -- %
+% --------------------------------------------------------------------------- %
+
+% ----------------------------------------------------------------- %
+% --                       Document Class                        -- %
+% ----------------------------------------------------------------- %
+
+\documentclass[11pt,SymmetricalJury,PhD]{inrsthesis}
+\usepackage{lipsum}
+
+% ----------------------------------------------------------------- %
+% --                          Packages                           -- %
+% ----------------------------------------------------------------- %
+
+% -- Math symbols and fonts.
+\let\mathfrak\undefined
+\usepackage[charter]{mathdesign}      % Bitstream Charter for best font.
+\usepackage[no-math]{fontspec}
+\setmainfont{EB Garamond}
+\usepackage[varg]{newtxmath}
+% \usepackage{unicode-math}
+
+\usepackage{microtype}   % Fine small typographical details
+\usepackage{realscripts} % Use the font's sub- and superscripts
+
+\usepackage[unicode=true,
+      pdfauthor={Joey Dumont},
+      pdftitle={inrsthesis -- an example file},
+      bookmarks=true,
+      bookmarksnumbered=true,
+      bookmarksopen=true,
+      bookmarksopenlevel=1,
+      bookmarksdepth=1,
+      breaklinks=false,
+      pdfborder={0 0 0},
+      backref=false,
+      colorlinks=true,
+      linktoc=page,
+      linkcolor=red,
+      citecolor=blue,
+      urlcolor=blue]
+           {hyperref}
+
+\usepackage[numbers,square,sort&compress]{natbib}
+\usepackage{subcaption}
+\usepackage{todonotes}
+
+% ----------------------------------------------------------------- %
+% --                        Customization                        -- %
+% ----------------------------------------------------------------- %
+\newenvironment{chaptersummary}{%
+  \begin{quotation}
+  \SingleSpacing
+  \setlength{\parskip}{\baselineskip}}{%
+  \end{quotation}}
+
+\allowdisplaybreaks
+
+\settocdepth{section}
+\setsecnumdepth{subsection}
+
+%\captionsetup[figure]{labelfont=bf,width=0.85\textwidth}
+%\captionsetup[table]{labelfont=bf,width=0.85\textwidth}
+
+% Caption fix with new TexLive version.
+\makeatletter
+\renewcommand{\counterwithin}{\@ifstar{\@csinstar}{\@csin}}
+\makeatother
+
+% Configuration of subcaptions.
+\renewcommand\thesubfigure{\alph{subfigure}}
+\renewcommand\thesubtable{\alph{subtable}}
+  \captionsetup[figure]{width=0.90\textwidth,labelfont={sf,bf},textfont=sf,font+=small}
+  \captionsetup[subfigure]{width=0.8\linewidth,parskip=0pt,font+=small}
+  \captionsetup[table]{width=0.90\textwidth,labelfont={sf,bf},textfont=sf,font+=small}
+  \captionsetup[subtable]{width=\linewidth,parskip=0pt,font+=small}
+
+\usetikzlibrary{tikzmark,calc}
+
+% ----------------------------------------------------------------- %
+% --                       Title Page Info                       -- %
+% ----------------------------------------------------------------- %
+\title{inrsthesis -- an example file}
+%\subtitle{Towards a Realistic Modelling of High-Power \\Laser Systems in the
+% Quantum Theory}
+\author{Joey Dumont}
+\year{2018}
+\program{Sciences de l'énergie et des matériaux}
+\centreINRS{Centre Énergie Matériaux et Télécommunications}
+\jury{
+  \juryitem
+    {Président du jury et \\ examinateur interne}
+    {Nom du professeur \\ Institution}
+  \\
+  \juryitem
+    {Examinateur externe}
+    {Nom du professeur \\ Faculté ou département \\ Institution}
+  \\
+  \juryitem
+    {Examinateur interne}
+    {Nom du professeur \\ Institution}
+  \\
+  \juryitem
+    {Directeur de recherche}
+    {Nom du professeur \\ Institution}
+  \\
+  \juryitem
+    {Codirecteur de recherche}
+    {Nom du professeur \\ Institution \\ Institution}
+}
+% --------------------------------------------------------------------------- %
+% --                               Document                                -- %
+% --------------------------------------------------------------------------- %
+
+\begin{document}
+
+\frontmatter
+
+\maketitle
+
+\chapter{Résumé}
+
+\textbf{Mots-clés}:
+
+\chapter{Abstract}
+
+\textbf{Keywords}:
+
+\chapter{Sommaire récapitulatif}
+
+This part is only necessary if you write your thesis in English.
+
+\cleardoublepage
+
+\tableofcontents
+\cleardoublepage
+
+\listoftables
+\cleardoublepage
+
+\listoffigures
+\cleardoublepage
+
+\dedication{I dedicate this to Mufasa, the God of Lions.}
+\cleardoublepage
+
+\epigraph{Education, \textit{n}: that which discloses to the wise and disguises
+from the foolish their lack of understanding.}{Ambrose Bierce}
+
+\cleardoublepage
+
+\mainmatter
+
+\chapter{Introduction}
+
+\lipsum[1]
+
+\section{First section of introduction}
+
+\lipsum[2]
+
+\begin{figure}
+  \centering
+  \missingfigure[figcolor=white]{Something or other.}
+  \caption[Caption goes here.]{This is a nice and cogent description
+           of the data presented in the figure. The results sure are
+           convincing!}
+  \label{fig:test}
+\end{figure}
+
+\lipsum[3]
+
+  \begin{equation}
+    \label{eq:nice-equation}
+    \chi = \frac{|e|\hbar\sqrt{\left(F^{\mu\nu}p_\nu\right)^2}}{c^3m_e^3} = \frac{(pk)}{(m_e c\omega)}\frac{E_0}{E_S}
+  \end{equation}
+
+Ain't Eq.~\eqref{eq:nice-equation} nice? See Appendix \ref{app.technical} for
+painstaking detail!
+
+\chapter{Another chapter}
+\label{chapter:methods}
+
+
+\section{First section}
+
+\subsection{First subsection}
+
+\subsection{Second subsection}
+
+
+\begin{table}
+  \centering
+  \begin{tabular}{lrr}
+  \toprule
+                       & \multicolumn{1}{c}{MP2}   & \multicolumn{1}{c}{GP3}      \\
+  \midrule
+  Base nodes           & AMD Opteron 6172          & Intel E5-2683 v4 (Broadwell) \\
+  Number of base nodes & 1632                      & 864                          \\
+  Processors per nodes & 24                        & 32                           \\
+  RAM per node         & 32 GiB                    & 128 GiB                      \\
+  Interconnect         & InfiniBand QDR (10 Gb/s)  & InfiniBand EDR (100 Gb/s)    \\
+  \bottomrule
+  \end{tabular}
+  \caption{Summary of the properties of the MP2 and GP3 Compute Canada supercomputing clusters.}
+  \label{tab:summary-of-cc-clusters}
+\end{table}
+
+
+\appendix
+\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+%\addtocontents{toc}{\addtolength\cftchapternumwidth{\widthof{Appendix\;}}}
+\renewcommand{\thechapter}{\Alph{chapter}}
+\renewcommand{\thesection}{\Alph{chapter}.\arabic{section}}
+
+\chapter{Technical Result in Painstaking Detail}
+\label{app.technical}
+
+
+\backmatter
+
+% -- Bibliography in a nice style.
+\nocite{*}
+\bibliographystyle{osajnl}
+\bibliography{thesis}
+
+\end{document}

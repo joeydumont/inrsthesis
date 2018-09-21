@@ -162,6 +162,26 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{PhD, MSc}
+%
+% This changes the title page according to your specified degree.
+%
+%    \begin{macrocode}
+%
+\DeclareOption{PhD}{%
+  \newcommand*{\INRS@degree}{Th\`ese pr\'esent\'ee pour l'obtention du grade de
+  \\%
+  Philosophi\ae~ Doctor (Ph.~D)}
+}
+
+\DeclareOption{MSc}{%
+  \newcommand*{\INRS@degree}{M\'emoire pr\'esent\'e pour l'obtention du grade
+  de\\%
+  Ma\^{i}tre \`{e}s sciences (M.~Sc.)}%
+}
+%
+%    \end{microcode}
+%
 % \subsection{Loading the \textsf{memoir} class}
 %
 % All remaining class options are passed to \textsc{memoir}.
@@ -481,21 +501,21 @@
      Par \\
      \INRS@author}\\
     \vspace{\INRS@authorspacing}
-    {\centering\INRS@fontprogram
-     Thèse présentée pour l'obtention du grade de\\
-     Philosophi\ae~ Doctor (Ph.~D.)\\
+    {\INRS@fontprogram\centering
+     \INRS@degree\\
      en \expandafter\MakeLowercase\expandafter{\INRS@program}}
 
      \vfill
 
-     {\INRS@fontsubtitle Jury d'évaluation}
+     {\INRS@fontsubtitle Jury d'\'evaluation}
      \vspace{-10pt}
     {\INRS@fontbase\INRS@printjury}
 
      \vspace*{10pt}
 
      \begin{flushleft}
-    {\textcopyright} {\INRS@fontbase Droits réservés de \INRS@author, \INRS@year\par}
+    {\textcopyright} {\INRS@fontbase Droits r\'eserv\'es de \INRS@author,
+    \INRS@year\par}
     \cleardoublepage
     \end{flushleft}
     }}
