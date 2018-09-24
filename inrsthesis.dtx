@@ -168,13 +168,16 @@
 %
 %    \begin{macrocode}
 %
+\newcommand*{\INRS@typenum}{}
 \DeclareOption{PhD}{%
+  \renewcommand*{\INRS@typenum}{0}
   \newcommand*{\INRS@degree}{Th\`ese pr\'esent\'ee pour l'obtention du grade de
   \\%
   Philosophi\ae~ Doctor (Ph.~D)}
 }
 
 \DeclareOption{MSc}{%
+  \renewcommand*{\INRS@typenum}{0}
   \newcommand*{\INRS@degree}{M\'emoire pr\'esent\'e pour l'obtention du grade
   de\\%
   Ma\^{i}tre \`{e}s sciences (M.~Sc.)}%
@@ -192,6 +195,11 @@
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{memoir}}
 \ExecuteOptions{11pt,letterpaper}
 \ProcessOptions
+\ifx\INRS@typenum\empty
+  \ClassError{inrsthese}%
+    {No thesis type specified.}%
+    {Declare the thesis type as a class option.}%
+\fi
 \LoadClass[twoside,openright]{memoir}
 %    \end{macrocode}
 %
